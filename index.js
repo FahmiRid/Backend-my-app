@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 
 const app = express();
-const port = 3001;
+const port = 5000;
 
 // Parse JSON bodies
 app.use(bodyParser.json());
@@ -16,18 +16,18 @@ app.post('/login', (req, res) => {
   const { username, password } = req.body;
 
   // Check if the username and password are correct
-  if (username === 'admin' && password === '123') {
+  if (username === 'fahmi' && password === '123') {
     // Authentication success
     const user = {
-      username: 'admin',
+      username: 'fahmi',
       role: 'admin'
     };
 
     res.json({ success: true, message: 'Login successful', user });
-  } else if (username === 'staff' && password === '1212') {
+  } else if (username === 'ridwan' && password === '321') {
     // Authentication success for staff
     const user = {
-      username: 'staff',
+      username: 'ridwan',
       role: 'staff'
     };
 
