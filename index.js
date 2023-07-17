@@ -18,28 +18,22 @@ app.use(cors());
 app.post('/login', (req, res) => {
   const { username, password } = req.body;
 
-  // Check if the username and password are correct
-  if (username === 'fahmi' && password === '123') {
+  // Load the users from the JSON file
+  const filePath = path.join(__dirname, 'users.json');
+  const users = loadUsers(filePath);
+
+  // Find the user with the provided username and password
+  const user = users.find(user => user.username === username && user.password === password);
+
+  if (user) {
     // Authentication success
-    const user = {
-      username: 'fahmi',
-      role: 'admin'
-    };
-
-    res.json({ success: true, message: 'Login successful', user });
-  } else if (username === 'ridwan' && password === '321') {
-    // Authentication success for staff
-    const user = {
-      username: 'ridwan',
-      role: 'staff'
-    };
-
     res.json({ success: true, message: 'Login successful', user });
   } else {
     // Authentication failed
     res.status(401).json({ success: false, message: 'Invalid username or password' });
   }
 });
+
 
 //Register API 
 app.post("/register", (req, res) => {
