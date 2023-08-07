@@ -1,0 +1,35 @@
+{
+    "product_id": 1,
+    "platform_id": 1,
+    "permissions": [
+        {
+            "permission_id": 1,
+            "permission_name": "Manage Role",
+            "permission_code": "MANAGE_ROLE",
+            "C": 1,
+            "R": 1,
+            "U": 1,
+            "D": 1,
+            "sub_permissions": [
+                {
+                    "permission_id": 2,
+                    "permission_name": "Add",
+                    "permission_code": "MANAGE_ROLE_ADD",
+                    "C": 1,
+                    "R": 0,         
+                    "U": 0,
+                    "D": 0
+                }
+            ]
+        },
+        {
+            "permission_id": 5,
+            "permission_name": "Report",
+            "permission_code": "REPORT",
+            "C": 1,
+            "R": 1,
+            "U": 1,
+            "D": 1
+        }
+    ]
+}
