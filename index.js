@@ -66,6 +66,23 @@ function loadUsers(filePath) {
     return [];
   }
 }
+async function saveUsers(filePath, users) {
+  try {
+    let existingUsers = [];
+
+    if (await fs.promises.exists(filePath)) {
+      const fileData = await fs.promises.readFile(filePath, "utf8");
+      existingUsers = JSON.parse(fileData);
+    }
+
+    const updatedUsers = [...existingUsers, ...users];
+
+    await fs.promises.writeFile(filePath, JSON.stringify(updatedUsers, null, 2), "utf8");
+    console.log("Users saved successfully.");
+  } catch (error) {
+    console.error("Failed to save users:", error);
+  }
+}
 
 // Helper function to save users to JSON file
 function saveUsers(filePath, users) {
@@ -109,45 +126,29 @@ app.get('/api/permissions/list', (req, res) => {
   }
 });
 
-// async function loadUsers(filePath) {
-//   try {
-//     const fileData = await fs.promises.readFile(filePath);
-//     return JSON.parse(fileData);
-//   } catch (error) {
-//     console.error("Failed to load users:", error);
-//     return [];
-//   }
-// }
 
-// async function saveUsers(filePath, users) {
-//   try {
-//     let existingUsers = [];
+app.get('/api/users', (req, res) => {
+  try {
+    const filePath = path.join(__dirname, 'users.json');
+    const users = loadUsers(filePath);
+    res.json(users);
+  } catch (error) {
+    console.error("Error retrieving user list:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
 
-//     if (await fs.promises.exists(filePath)) {
-//       const fileData = await fs.promises.readFile(filePath, "utf8");
-//       existingUsers = JSON.parse(fileData);
-//     }
+app.get('/check-username', (req, res) => {
+  const { username } = req.query;
 
-//     const updatedUsers = [...existingUsers, ...users];
+  const filePath = path.join(__dirname, 'users.json');
+  const users = loadUsers(filePath);
 
-//     await fs.promises.writeFile(filePath, JSON.stringify(updatedUsers, null, 2), "utf8");
-//     console.log("Users saved successfully.");
-//   } catch (error) {
-//     console.error("Failed to save users:", error);
-//   }
-// }
+  const isAvailable = !users.some(user => user.username === username);
 
+  res.json({ isAvailable });
+});
 
-// // Helper function to load permissions from JSON file
-// function loadPermissions(filePath) {
-//   try {
-//     const fileData = fs.readFileSync(filePath);
-//     return JSON.parse(fileData);
-//   } catch (error) {
-//     console.error("Failed to load permissions:", error);
-//     return {};
-//   }
-// }
 
 
 const subCategories = {
@@ -162,8 +163,6 @@ const subCategories = {
 app.get('/api/subcategories', (req, res) => {
   res.json(subCategories);
 });
-
-
 
 
 // Start the server
