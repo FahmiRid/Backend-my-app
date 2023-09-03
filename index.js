@@ -149,6 +149,55 @@ app.get('/check-username', (req, res) => {
   res.json({ isAvailable });
 });
 
+function fetchPermissions(product_line_id, role_id) {
+  // Implement logic to fetch permissions based on product_line_id and role_id
+  // Replace this with your actual data retrieval logic
+  const permissions = [
+    // Sample permission data
+    {
+      permission_id: 1,
+      C: 0,
+      R: 0,
+      U: 0,
+      D: 0,
+      A: 0,
+      permission: 'USER',
+      permission_description: 'user',
+      parent_permission_id: null,
+      parent_permission: null,
+      is_parent: 1,
+      product_line_name: 'MORTGAGE',
+      product_line_id: 1,
+      platform_id: 1,
+      platform_name: 'Admin',
+    },
+    // Add more permission objects as needed
+  ];
+
+  return permissions;
+}
+
+app.post('/salesforce/user/role/permission/list', (req, res) => {
+  // Extract the product_line_id and role_id from the request body (optional)
+  const { product_line_id, role_id } = req.body;
+
+  // Fetch permissions based on product_line_id and role_id
+  const permissions = fetchPermissions(product_line_id, role_id);
+
+  // Construct the response object
+  const response = {
+    statusCode: 'MH000',
+    code: 200,
+    text: 'success',
+    data: {
+      role_id: 58, // Replace with the actual role_id
+      list: permissions,
+    },
+  };
+
+  res.json(response);
+});
+
 
 
 const subCategories = {
