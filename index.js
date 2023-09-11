@@ -104,28 +104,6 @@ function saveUsers(filePath, users) {
   }
 }
 
-function loadPermissions(filePath) {
-  try {
-    const fileData = fs.readFileSync(filePath);
-    return JSON.parse(fileData);
-  } catch (error) {
-    console.error("Failed to load permissions:", error);
-    return {};
-  }
-}
-
-
-app.get('/api/permissions/list', (req, res) => {
-  try {
-    const filePath = path.join(__dirname, 'permissionList.json');
-    const permissionList = loadPermissions(filePath);
-    res.json(permissionList);
-  } catch (error) {
-    console.error("Error retrieving permission list:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
-
 
 app.get('/api/users', (req, res) => {
   try {
@@ -299,19 +277,27 @@ app.post('/salesforce/user/role/permission/list', (req, res) => {
   res.json(response);
 });
 
+let data = [];
 
+// Sample JSON file path
+const jsonFilePath = 'data.json';
 
-const subCategories = {
-  1: 'Success Application',
-  2: 'Failed Application',
-  3: 'Appeal Application',
-  4: 'Document Upload',
-  5: 'Document Extraction',
-};
+// Create an endpoint to receive and store data
+app.post('/api/storeData', (req, res) => {
+  try {
+    const newData = req.body;
 
-// Endpoint to get sub-category data
-app.get('/api/subcategories', (req, res) => {
-  res.json(subCategories);
+    // Add the received data to the in-memory storage
+    data.push(newData);
+
+    // Save the data to the JSON file
+    fs.writeFileSync(jsonFilePath, JSON.stringify(data, null, 2));
+
+    res.status(200).json({ message: 'Data stored successfully', newData });
+  } catch (error) {
+    console.error('Error storing data:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
 });
 
 
