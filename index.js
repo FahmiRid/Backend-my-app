@@ -243,8 +243,8 @@ function fetchPermissions(product_line_id, role_id) {
       "A": 0,
       "permission": "TESTING",
       "permission_description": "DESCRIPTION",
-      "parent_permission_id": 4,
-      "parent_permission": "REPORT",
+      "parent_permission_id": 6,
+      "parent_permission": "HOME",
       "is_parent": 0,
       "product_line_name": "MORTGAGE",
       "product_line_id": 1,
@@ -296,6 +296,36 @@ app.post('/api/storeData', (req, res) => {
     res.status(200).json({ message: 'Data stored successfully', newData });
   } catch (error) {
     console.error('Error storing data:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Create an endpoint to receive and store data
+app.post('/role/submit', (req, res) => {
+  const roleName = req.body.roleName;
+  const productLine = req.body.productLine;
+
+  // Create an object to store in the data array
+  const newData = {
+    roleName,
+    productLine,
+  };
+
+  // Add the received data to the in-memory storage
+  data.push(newData);
+
+  // Save the data to the JSON file
+  fs.writeFileSync(jsonFilePath, JSON.stringify(data, null, 2));
+
+  res.json({ message: 'Parameters received and stored successfully!', newData });
+});
+
+app.get('/api/rolePermissions', (req, res) => {
+  try {
+    const data = require('./data.json'); // Load data from data.json
+    res.json(data);
+  } catch (error) {
+    console.error('Error reading data:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
