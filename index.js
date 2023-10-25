@@ -256,6 +256,8 @@ function fetchPermissions(product_line_id, role_id) {
   return permissions;
 }
 
+
+
 app.post('/salesforce/user/role/permission/list', (req, res) => {
   // Extract the product_line_id and role_id from the request body (optional)
   const { product_line_id, role_id } = req.body;
@@ -303,12 +305,12 @@ app.post('/api/storeData', (req, res) => {
 // Create an endpoint to receive and store data
 app.post('/role/submit', (req, res) => {
   const roleName = req.body.roleName;
-  const productLine = req.body.productLine;
+  const productLines = req.body.productLine;
 
   // Create an object to store in the data array
   const newData = {
     roleName,
-    productLine,
+    productLines,
   };
 
   // Add the received data to the in-memory storage
@@ -330,6 +332,61 @@ app.get('/api/rolePermissions', (req, res) => {
   }
 });
 
+const productLines = [
+  { id: 1, name: "Mortgage" },
+  { id: 2, name: "ASB" },
+  { id: 3, name: "Digital Wealth" }
+];
+
+
+app.get('/product-lines', (req, res) => {
+  res.json(productLines);
+});
+
+const roles = [
+  {
+    id: 1,
+    roleName: 'Mortgage',
+    productLine: 'Mortgage',
+  },
+  // Add more roles here
+];
+
+app.put('/update-role/:roleId', (req, res) => {
+  const roleId = parseInt(req.params.roleId);
+  const { roleName, productLine } = req.body;
+
+  const roleToUpdate = roles.find((role) => role.id === roleId);
+
+  if (roleToUpdate) {
+    roleToUpdate.roleName = roleName;
+    roleToUpdate.productLine = productLine;
+
+    // Save the updated data to the data.json file
+    fs.writeFileSync(jsonFilePath, JSON.stringify(data, null, 2));
+
+    res.status(200).json({ message: 'Role updated successfully' });
+  } else {
+    res.status(404).json({ message: 'Role not found' });
+  }
+});
+
+
+app.get('/roles', (req, res) => {
+  res.json(roles);
+});
+
+app.get('/api/userslist', (req, res) => {
+  try {
+    const filePath = path.join(__dirname, 'userList.json'); // Assuming the JSON file is in the same directory as the server code
+    const usersData = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+
+    res.json(usersData);
+  } catch (error) {
+    console.error("Error retrieving user data:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
 
 // Start the server
 app.listen(port, () => {
